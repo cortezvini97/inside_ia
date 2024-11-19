@@ -1,0 +1,7 @@
+{% if type == "css" %}
+    {{encore_entry_link_tags(name)}}
+{% endif %}
+
+{% if type == "js" %}
+    {{encore_entry_script_tags(name)}}
+{% endif %}

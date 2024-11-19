@@ -1,0 +1,118 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: rgb(32, 30, 30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.login_content{
+    background-color: #FFF;
+    padding: 40px;
+    width: 500px;
+    box-shadow: 5px 5px 15px 5px #222222;
+    border-radius: 10px;
+}
+
+.login_content form{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.title{
+    text-align: center;
+}
+
+.input-box{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 400px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    outline: none;
+    color: #000;
+    font-size: 1em;
+}
+
+.input-box label {
+    position: absolute;
+    left: 0;
+    padding: 10px;
+    pointer-events: none;
+    font-size: 1em;
+    color: rgba(0, 0, 0, 0.25);
+    text-transform: uppercase;
+    transition: .5s;
+}
+
+
+.input-box input:focus ~ label, .input-box input:valid ~ label{
+    color: #000;
+    transform: translateX(10px) translateY(-5px);
+    font-size: 0.65em;
+    padding: 0 10px;
+    background-color: #FFF;
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.btn-box{
+    display: flex;
+    justify-content: center;
+}
+
+.btn{
+    width: 200px;
+    border: none;
+    background-color: rgb(12, 153, 172);
+    color: #FFF;
+    padding: 18px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.btn:hover{
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+.alert {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    text-align: center;
+}
+
+.alert-danger {
+    color: white;
+    background-color: rgb(211, 95, 95);
+    border: 1px solid rgb(184, 83, 83);
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 450px) 
+{
+    .login_content{
+        width: 350px;
+    }
+    .input-box{
+        width: 250px;
+    }
+}

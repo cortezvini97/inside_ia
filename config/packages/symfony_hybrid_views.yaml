@@ -1,0 +1,6 @@
+symfony_hybrid_views:
+    dir_views: 'views'
+    cache_dir: 'blade_cache'
+    directives_dir: 'blade_directives'
+    functions_dir: 'blade_functions'
+    cache: false

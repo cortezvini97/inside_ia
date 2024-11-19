@@ -1,0 +1,192 @@
+[
+    {
+        "id": "a81f3540-a412-4637-a087-f7ea7cb56174",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-06",
+        "messages": [
+            {
+                "id": "c95467d4-4dfc-4e45-b78a-d746cca9eac2",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "ceb03fcd-d899-44ae-af13-248dbd9530b3",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "d738e249-6294-42e7-9074-b81d8f8b9e34",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-10-31",
+        "messages": [
+            {
+                "id": "5e5c88e2-8ef2-4c45-9759-e6065b8b5e10",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "2af6a0f1-7a79-46a1-81ed-5830c5e02e8e",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "2b5c841d-74b7-4323-bae4-9201b9f66f21",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-10-31",
+        "messages": [
+            {
+                "id": "f029267c-4e4f-499e-8b37-8005a98efc23",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "d3e4ebae-7ed4-4004-9c6d-0a9a9c82f61c",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "e0294d2c-7683-45f3-a91c-5e6439251ab9",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-06",
+        "messages": [
+            {
+                "id": "b0a63272-fc8d-43a9-99f6-17e7b0d196e5",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "dbebf6e7-5fb2-4a4e-bb58-2e1607aadb0c",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "60c38491-0d4f-4f53-80c7-13f8b9c6d333",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-06",
+        "messages": [
+            {
+                "id": "c13289d3-28e4-497f-8d6d-50b3d14d2341",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "64d7e122-b5c9-4c56-9b9f-307f3540a22b",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "3a7db93b-0d8e-4b1e-87f2-8859e564132f",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-07",
+        "messages": [
+            {
+                "id": "ad6bcbfd-26e5-4345-8bdf-5db9c2fe4211",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "733a3c1b-efc9-47fa-9a7c-fad63d39a6f7",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "5f2c3549-dcf2-4c1a-9a91-90c20cf3a4b4",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-10-08",
+        "messages": [
+            {
+                "id": "ff3129f7-2a35-44b6-a9ad-c10b8e6145a5",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "f51cdbb5-6023-4b5b-a333-39b9ab2e4d07",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "ebde3271-349f-4cd8-8f4f-4382c9e7c45a",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-09-07",
+        "messages": [
+            {
+                "id": "273d7b0e-7f4e-4a4b-a542-c6f5c4f9a1d9",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "ec526d4d-3f19-40b2-85de-e5f9323b6e2d",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "39a2f5a6-7bde-4676-8cb1-529cc0f6f946",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-07",
+        "messages": [
+            {
+                "id": "c32e8b1d-9bda-41b5-8e39-2ad2c19b204e",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "2bc5b5c1-e0f4-4a7e-8c19-e8be192da3e4",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    },
+    {
+        "id": "491a7357-f35a-4c1c-833e-1958d056ea3c",
+        "user_id": 1,
+        "titluo": "Como posso te Ajudar ?",
+        "model": "GPT-3.5-turbo",
+        "date": "2024-11-07",
+        "messages": [
+            {
+                "id": "7d5b4f07-bf91-4e6f-93f1-60d43fc7e7af",
+                "type": "Humman",
+                "msg": "Olá tudo bem?"
+            },
+            {
+                "id": "e5e8d3b5-4d83-4a32-9b14-12964ab2cb9f",
+                "type": "IA",
+                "msg": "Olá, Como posso te ajudar hoje?"
+            }
+        ]
+    }
+]
