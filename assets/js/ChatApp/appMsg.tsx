@@ -3,6 +3,7 @@ import { CategorizedConversations, Conversation, ConversationsView, Message } fr
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { MessagesView } from "./messages";
+import { FileType, FileTypeView } from "./FileType";
 
 async function getUser(){
     const response = await axios.get(`https://localhost:8000/api/`);
@@ -86,11 +87,14 @@ async function sendMsg(conversation_id:string) {
     return responseDataMsg
 }
 
-async function sendMsgChat(conversation_id:string, prompt:string){
+async function sendMsgChat(conversation_id:string, prompt:string, file:string|null){
     const data = {
         conversation_id: conversation_id,
         prompt: prompt,
+        file:file
     }
+
+    console.log(data)
 
     const datapost = JSON.stringify(data)
 
@@ -144,6 +148,35 @@ async function sendMsgChat(conversation_id:string, prompt:string){
     return response
 }
 
+
+async function uploadFile(file:FileType|null, conversation_id:string|undefined) {
+    if(file == null){
+        return null
+    }
+
+    const datafile = {
+        file: file.content,
+        conversation_id: conversation_id
+    }
+
+    const datafilestr = JSON.stringify(datafile)
+
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://localhost:8000/api/uploadFileConversation',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data:datafilestr
+    }
+
+    const response = await axios.request(config)
+
+    return response.data
+
+}
+
 const AppMsg = ()=>{
     const [user, setUser] = useState<User>()
     const [conversations, setConversations] = useState<CategorizedConversations>()
@@ -152,27 +185,33 @@ const AppMsg = ()=>{
     const [prompt, setPrompt] = useState<string>("")
     const [loadding, setLoadding] = useState<boolean>(false)
     const [submitbtnDisabled, setSetSubmitDisabled] = useState<boolean>(true)
+    const [fileType, setFileType] = useState<FileType|null>(null)
  
     const {id} = useParams()
     const navigate = useNavigate()
 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const onSubimit = (e:any)=>{
+    const onSubimit = async (e:any)=>{
+
+        const file = await uploadFile(fileType, id)
+
+
         let conversation = user?.conversations.find((conversation:Conversation) => conversation.id == id)
         if (conversation != undefined){
             const humman_msg:Message = {
                 id: crypto.randomUUID(),
                 msg: prompt,
-                file: null,
+                file: (file == null) ? file:file.file_data,
                 type: "Humman"
             }
             conversation.messages.push(humman_msg)
+            console.log(conversation)
             setConversation(conversation)
         }
         setLoadding(true)
         
-        sendMsgChat(id!, prompt).then((data:any)=>{
+        sendMsgChat(id!, prompt, (file != null) ? file.file_data : null).then((data:any)=>{
             const conversationNew:Conversation = {
                 id: data["id"],
                 titulo: data["titulo"],
@@ -205,7 +244,9 @@ const AppMsg = ()=>{
             conversationView.scrollTo({top:conversationView.scrollHeight, behavior: "smooth" });
         }, 0);
         setPrompt("")
-        
+        if(file != null){
+            setFileType(null)
+        }
     }
 
 
@@ -376,6 +417,46 @@ const AppMsg = ()=>{
         }
     };
 
+    const handleloadFileUpload = () => {
+        const fileInput = document.getElementById("file-input") as HTMLInputElement;
+        fileInput.click();
+    }
+
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            console.log("Arquivos selecionados:", files); // Manipule os arquivos conforme necessário
+            const file:File = files[0];
+            const fileReader = new FileReader()
+            fileReader.onload = (event: ProgressEvent<FileReader>) => {
+                const fileContent = event.target?.result; // Conteúdo do arquivo
+                
+                const type = file.type.split("/")
+                
+                const typeFile:FileType = {
+                    name:file.name,
+                    type: type[0],
+                    subtype: type[1],
+                    content:fileContent,
+                    size:file.size,
+                    lastModified: file.lastModified,
+                    file:file
+                }
+
+                setFileType(typeFile)
+            };
+    
+            // Lê o arquivo como texto (use outro método, como `readAsDataURL` para imagens)
+            fileReader.readAsDataURL(file);
+        }
+    };
+
+    const removeCurrentFileType = (e:React.MouseEvent<HTMLButtonElement>)=>{
+        const fileInput = document.querySelector("#file-input") as HTMLInputElement
+        fileInput.value = ""
+        setFileType(null)
+    }
+
     useEffect(() => {
         // Inicializar a altura do textarea quando o componente for montado
         adjustTextareaHeight();
@@ -410,10 +491,21 @@ const AppMsg = ()=>{
             <main>
                 <MessagesView loadding={loadding} userLetra={getPrimeiraLetra(username)} conversation={conversation}/>
                 <div id="message-form">
+                    <div className="files-view">
+                        {fileType != null ?
+                            <FileTypeView filetype={fileType} callback={removeCurrentFileType} />
+                        :null}
+                    </div>
                     <div className="message-wrapper">
                         <textarea ref={textareaRef} onChange={handleChange} onKeyDown={keydown} id="message" rows={1} placeholder="Send a message" value={prompt}></textarea>
                         <button disabled={submitbtnDisabled} onClick={onSubimit} className="send-button"><i className="fa fa-paper-plane"></i></button>
-                        <button className="file-button"><i className="fa-solid fa-paperclip"></i></button>
+                        <button onClick={handleloadFileUpload} className="file-button"><i className="fa-solid fa-paperclip"></i></button>
+                        <input
+                                id="file-input"
+                                type="file"
+                                style={{ display: "none" }}
+                                onChange={onFileChange}
+                        />
                     </div>
                 </div>
                 

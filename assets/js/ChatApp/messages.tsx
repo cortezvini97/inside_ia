@@ -53,7 +53,7 @@ export const MessagesView = ({conversation, userLetra, loadding}:{conversation:C
         
 
        return (
-        <FileViewChat type={type} subtype={subtype} conversation_id={conversation?.id} name={file[1]}/>
+        <FileViewChat type={type} subtype={subtype} conversation_id={conversation?.id} content={file[1]}/>
        )
         
         
@@ -134,6 +134,44 @@ export const MessagesView = ({conversation, userLetra, loadding}:{conversation:C
                                                         
                                                     );
                                                 },
+                                                img({alt, src, ...props}: any) {
+
+                                                    const handleDownload = async () => {
+                                                        try {
+                                                            const response = await fetch(src);
+                                                            if (!response.ok) {
+                                                                throw new Error("Erro ao baixar a imagem");
+                                                            }
+                                                            const blob = await response.blob();
+                                                            const blobUrl = URL.createObjectURL(blob);
+                                                
+                                                            const link = document.createElement("a");
+                                                            link.href = blobUrl;
+                                                            link.download = alt || "downloaded-image";
+                                                            document.body.appendChild(link);
+                                                            link.click();
+                                                            document.body.removeChild(link);
+                                                
+                                                            // Opcionalmente, libere o URL do Blob
+                                                            URL.revokeObjectURL(blobUrl);
+                                                        } catch (error) {
+                                                            console.error("Erro ao fazer o download da imagem:", error);
+                                                        }
+                                                    };
+                                                
+
+                                                    return (
+                                                        <div className="view-file file-ia">
+                                                            <div className="img-view">
+                                                                <div className="header">
+                                                                    <button onClick={handleDownload} ><i className="fa-solid fa-download"></i> Download</button>
+                                                                </div>
+                                                                <img className="img" src={src} alt={alt}/>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                                
                                             }}
                                         />
                                     </div>

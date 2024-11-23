@@ -158,6 +158,57 @@ class ApiController extends AbstractController
         
     }
 
+
+    #[Route(path: "/api/uploadFileConversation", name: "uploadFileConversation", methods:["POST"])]
+    public function uploadFileConversation(Request $request): Response{
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true);
+        $id = $data["conversation_id"];
+        $file = $data["file"];
+
+        $conversation = $this->conversationsRepository->findOneBy([
+            "id"=>$id,
+            "user"=>$user
+        ]);
+
+    
+
+        if($conversation == null){
+            return $this->json(["error" => "Conversation not found"], 404);
+        }
+
+        if ($file == null){
+            return $this->json(["error" => "File not found"], 404);
+        }
+
+        $dir = $this->getParameter("upload_folder").DIRECTORY_SEPARATOR.$conversation->getId()->toString();
+        if (preg_match('/^data:(.*?);base64,(.*)$/', $file, $matches)) {
+            $mimeType = $matches[1];  // Exemplo: image/jpeg, text/plain, etc.
+            $base64Data = $matches[2]; // Dados codificados em base64
+
+            $fileContent = base64_decode($base64Data);
+
+            if ($fileContent === false) {
+                return $this->json(['error' => 'Falha ao decodificar o arquivo'], 400);
+            }
+
+            $extension = explode('/', $mimeType)[1];
+
+            if ($extension == 'jpeg'){
+                $extension = 'jpg';
+            }
+
+            $filename = uniqid() . '.' . $extension;
+            $filePath = $dir .DIRECTORY_SEPARATOR. $filename;
+
+            file_put_contents($filePath, $fileContent);
+
+            return $this->json(["file_data" =>$mimeType.";".$filename], 200);
+
+        }
+    }
+
     #[Route(path:"/api/sendMsgByConversation")]
     public function sendMsgByConversation(Request $request):Response
     {
@@ -167,6 +218,7 @@ class ApiController extends AbstractController
 
         $id = $data["conversation_id"];
         $prompt = $data["prompt"];
+        $file = $data["file"];
 
         $conversation = $this->conversationsRepository->findOneBy([
             "id"=>$id,
@@ -177,7 +229,8 @@ class ApiController extends AbstractController
             "conversation_id"=>$conversation->getId()->toString(),
             "model"=>$conversation->getModel(),
             "userprompt"=>$prompt,
-            "history"=>$conversation->getMessages()->getValues()
+            "history"=>$conversation->getMessages()->getValues(),
+            "file"=>$file
         ];
 
 

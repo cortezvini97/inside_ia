@@ -85,12 +85,12 @@ export const FileTypeView = ({filetype, callback, ...props}:{filetype:FileType, 
     }
 }
 
-export const FileViewChat = ({type, subtype, name, conversation_id}:{type:string, subtype:string, name:string, conversation_id:string|undefined})=>{
+export const FileViewChat = ({type, subtype, content, conversation_id}:{type:string, subtype:string, content:string, conversation_id:string|undefined})=>{
    if (type == "image"){
         return (
             <div className="view-file">
                 <div className="img-view">
-                    <img src={`http://localhost:5000/getfile/${conversation_id}/${name}`} alt=""/>
+                    <img src={`http://localhost:5000/getfile/${conversation_id}/${content}`} alt=""/>
                 </div>
             </div>
         )

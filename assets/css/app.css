@@ -876,3 +876,33 @@ p {
     width: 400px;
     border-radius: 10px;
 }
+
+.file-ia .img-view{
+    position: relative;
+    cursor: pointer;
+}
+
+.file-ia .img-view .header{
+    display: none;
+    position: absolute;
+    width: 25%;
+    background-color: #17171775;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.file-ia .img-view .header button{
+    color: #FFF;
+    text-decoration: none;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+} 
+
+.file-ia .img-view:hover.img{
+    opacity: 0.5;
+}
+
+.file-ia .img-view:hover .header{
+    display: block;
+}

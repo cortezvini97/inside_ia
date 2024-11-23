@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 export type Message = {
     id: string;
     type: "Humman" | "IA";  // Ajustando para os tipos que você possui
-    file: string|null;
+    file: string|null|undefined;
     msg: string;
 };
 

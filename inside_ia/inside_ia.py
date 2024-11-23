@@ -33,7 +33,6 @@ class InsideIA:
 
     def genResponse(self):
         tools = getTools()
-        print(tools)
         llm = ChatGoogleGenerativeAI(model=self.model, temperature=1)
         memory = InMemoryChatMessageHistory(session_id=self.chat_id)
         messages = self.__get_messages()
@@ -64,10 +63,16 @@ class InsideIA:
         config = {"configurable": {"session_id": self.chat_id}}
 
         if self.file !=None:
+                print("este")
                 file = self.file.split(";")
                 result =  agent_with_chat_history.invoke({
-                    "input": f"{self.userPrompt}/{file[1]} mime_type:{file[0]} conversation_id:{self.chat_id}",
+                    #"input": f"{self.userPrompt}/{file[1]} mime_type:{file[0]} conversation_id:{self.chat_id}",
+                    "input": f"prompt: {self.userPrompt}/file_name:{file[1]}/mime_type:{file[0]}/conversation_id:{self.chat_id}"
                 }, config)
+
+                
+                print(result)
+
                 result_json = {
                     "input":self.userPrompt,
                     "file":self.file,
@@ -78,6 +83,8 @@ class InsideIA:
             result =  agent_with_chat_history.invoke({
                 "input": f"{self.userPrompt}",
             }, config)
+
+            print(result)
         
             result_json = {
                 "input":self.userPrompt,
