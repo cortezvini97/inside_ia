@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 import SyntaxHighlighter from "react-syntax-highlighter";
-import {vs2015 } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import {vs2015} from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 export interface FileType {
     type: string,
@@ -45,7 +45,7 @@ export const FileTypeView = ({filetype, callback, ...props}:{filetype:FileType, 
                 <div className="view-file">
                     <div className="pdf-view">
                         <button onClick={callback} className="close">&times;</button>
-                        <iframe src={filetype.content?.toString()} width="100%" height="500px"></iframe>
+                        <iframe title="pdf" src={filetype.content?.toString()} width="100%" height="500px"></iframe>
                     </div>
                 </div>
             )

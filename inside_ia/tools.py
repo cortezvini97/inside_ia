@@ -8,10 +8,8 @@ import base64
 from PIL import Image
 from rembg import remove
 import uuid
-import requests
-import mimetypes
 import os
-import json
+import cv2
 
 def get_genai_response(message):
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
@@ -56,10 +54,12 @@ def fileReader(file_name:str, mime_type:str, conversation_id:str, prompt:str)->s
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=generation_config,
-            system_instruction="Você deve agir como um especialista que toda decisões de qual ferramenta usar para imagem de acordo com o prompt retornar a resposta em uma palavra que é as palavras do array\n\n\n[\"classificar\", \"remover_bg\", \"image_to_black_and_white\" ]",
+            system_instruction="Você deve agir como um especialista que toda decisões de qual ferramenta usar para imagem de acordo com o prompt retornar a resposta em uma palavra que é as palavras do array\n\n\n[\"classificar\", \"remover_bg\", \"image_to_black_and_white\" , \"image_to_drawing\"]",
         )
 
         response = model.generate_content(prompt)
+
+        print(response.text)
 
 
         if "classificar" in response.text.strip():
@@ -69,12 +69,71 @@ def fileReader(file_name:str, mime_type:str, conversation_id:str, prompt:str)->s
             result = remove_bg(file_name, conversation_id)
             result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto: ![Image no bg](http://localhost:5000/getfile/{conversation_id}/{result})"
             return result_markdown
+        elif "image_to_black_and_white" in response.text.strip():
+            result = image_to_black_and_white(file_name, conversation_id)
+            result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto: ![Image black white](http://localhost:5000/getfile/{conversation_id}/{result})"
+            return result_markdown
+        elif "image_to_drawing" in response.text.strip():
+            result = image_to_drawing(file_name, conversation_id)
+            result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto sem alterar nada: {result}"
+            return result_markdown
         else:
             return "Não foi possível realizar a ação solicitada"
+    else:
+        return "Não foi possível realizar a ação solicitada"
 
 
+def image_to_drawing(image_name, conversation_id):
+    print("image_to_drawing")
+    file_path = f"./files/{conversation_id}/{image_name}"
+    imagem = cv2.imread(file_path)
+    imagem_pb = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+    imagem_invertida = cv2.bitwise_not(imagem_pb)
+    imagem_blur = cv2.GaussianBlur(imagem_invertida, (55, 55), 0)
+    imagem_blur_invertida = cv2.bitwise_not(imagem_blur)
+    imagem_desenho = cv2.divide(imagem_pb, imagem_blur_invertida, scale=256.0)
+    unique_id = str(uuid.uuid4())
+    file_path_sketch = f"./files/{conversation_id}/{unique_id}.jpg"
+    cv2.imwrite(file_path_sketch, imagem_desenho)
+
+    unique_id_cartoon = str(uuid.uuid4())
 
 
+    file_path_cartoon = f"./files/{conversation_id}/{unique_id_cartoon}.jpg"
+
+    gray = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+    edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 15, 9)
+
+    color = cv2.bilateralFilter(imagem, 9, 300, 300)
+
+    # 3) Cartoon
+    cartoon = cv2.bitwise_and(color, color, mask=edges)
+    
+
+    cv2.imwrite(file_path_cartoon, cartoon)
+
+    
+    response = f"""
+        # 1. Sketch Style
+
+        ![Image_Sketch](http://localhost:5000/getfile/{conversation_id}/{unique_id}.jpg)
+
+        # 2. Cartoon Style
+
+        ![Image_Cartoon](http://localhost:5000/getfile/{conversation_id}/{unique_id_cartoon}.jpg)
+        
+    """
+
+    return response
+
+def image_to_black_and_white(image_name:str, conversation_id:str):
+    file_path = f"./files/{conversation_id}/{image_name}"
+    imagem = cv2.imread(file_path)
+    imagem_pb = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+    unique_id = str(uuid.uuid4())
+    file_path_pb = f"./files/{conversation_id}/{unique_id}"
+    cv2.imwrite(f"{file_path_pb}.jpg", imagem_pb)
+    return unique_id+".jpg"
 
 def remove_bg(image_name:str, conversation_id:str):
     file_path = f"./files/{conversation_id}/{image_name}"
