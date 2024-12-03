@@ -58,4 +58,5 @@ if __name__ == "__main__":
     api_key = os.getenv("GOOGLE_API_KEY")
     os.environ["GOOGLE_API_KEY"] = api_key
     os.environ["GOOGLE_TITLE_API"] = os.getenv("GEAI_TITLE_API_KEY")
+    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
     app.run(debug=True)

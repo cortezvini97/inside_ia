@@ -33,14 +33,20 @@ class InsideIA:
 
     def genResponse(self):
         tools = getTools()
-        llm = ChatGoogleGenerativeAI(model=self.model, temperature=1)
+        if self.file != None:
+            temperature = 0
+            system_prompt = "Seu nome é Inside IA . Você é um assistente virtual que pode ajudar com diversas tarefas de acordo com suas ferramentas."
+        else:
+            temperature = 1
+            system_prompt = "Seu nome é Inside IA . Você é um assistente virtual que pode ajudar com diversas tarefas de acordo com suas ferramentas.\n Se o usuário pedir para gerar um código deve sempre usar ferramenta code_generator"
+        llm = ChatGoogleGenerativeAI(model=self.model, temperature=temperature)
         memory = InMemoryChatMessageHistory(session_id=self.chat_id)
         messages = self.__get_messages()
         memory.add_messages(messages=messages)
         prompt = ChatPromptTemplate.from_messages(
             [
-                ("system","""
-                    Seu nome é Inside IA . Você é um assistente virtual que pode ajudar com diversas tarefas de acordo com suas ferramentas.
+                ("system",f"""
+                    {system_prompt}
                 """),
                 # First put the history
                 ("placeholder", "{chat_history}"),

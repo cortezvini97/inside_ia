@@ -877,6 +877,28 @@ p {
     border-radius: 10px;
 }
 
+.content .view-file .video-view{
+    width: 400px;
+    margin-bottom: 10px;
+}
+
+.content .view-file .video-view video{
+    width: 400px;
+    border-radius: 10px;
+}
+
+
+.content .view-file .pdf-view{
+    width: 400px;
+    margin-bottom: 10px;
+}
+
+.content .view-file .pdf-view iframe{
+    width: 400px;
+    border: none;
+}
+
+
 .file-ia .img-view{
     position: relative;
     cursor: pointer;

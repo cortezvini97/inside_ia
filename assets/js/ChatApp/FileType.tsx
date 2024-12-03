@@ -86,13 +86,31 @@ export const FileTypeView = ({filetype, callback, ...props}:{filetype:FileType, 
 }
 
 export const FileViewChat = ({type, subtype, content, conversation_id}:{type:string, subtype:string, content:string, conversation_id:string|undefined})=>{
-   if (type == "image"){
-        return (
-            <div className="view-file">
-                <div className="img-view">
-                    <img src={`http://localhost:5000/getfile/${conversation_id}/${content}`} alt=""/>
+    if (type == "image"){
+            return (
+                <div className="view-file">
+                    <div className="img-view">
+                        <img src={`http://localhost:5000/getfile/${conversation_id}/${content}`} alt=""/>
+                    </div>
                 </div>
-            </div>
-        )
-   }
+            )
+    }else if (type == "video"){
+            return (
+                <div className="view-file">
+                    <div className="video-view">
+                        <video src={`http://localhost:5000/getfile/${conversation_id}/${content}`} controls />
+                    </div>
+                </div>
+            )
+    }else if (type == "application"){
+            if (subtype == "pdf"){
+                return (
+                    <div className="view-file">
+                        <div className="pdf-view">
+                            <iframe title="pdf" src={`http://localhost:5000/getfile/${conversation_id}/${content}`} width="100%" height="500px"></iframe>
+                        </div>
+                    </div>
+                )
+            }
+    }
 }

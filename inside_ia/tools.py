@@ -10,6 +10,7 @@ from rembg import remove
 import uuid
 import os
 import cv2
+from anime_gan import AnimeGAN
 
 def get_genai_response(message):
     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
@@ -33,6 +34,8 @@ def validate_mimetype(mime_type, category):
     # Valida qualquer tipo "image/*"
     if category == "image/*":
         return mime_type.startswith("image/")
+    elif category == "video/*":
+        return mime_type.startswith("video/")
     return mime_type == category
 
 
@@ -43,6 +46,7 @@ def fileReader(file_name:str, mime_type:str, conversation_id:str, prompt:str)->s
     genai.configure(api_key=os.environ["GEAI_TITLE_API_KEY"])
 
     if validate_mimetype(mime_type, "image/*"):
+        print("Imagem:", mime_type)
         generation_config = {
             "temperature": 0,
             "top_p": 0.95,
@@ -58,33 +62,66 @@ def fileReader(file_name:str, mime_type:str, conversation_id:str, prompt:str)->s
         )
 
         response = model.generate_content(prompt)
+        
+        response_text = response.text.strip().lower()
 
-        print(response.text)
 
-
-        if "classificar" in response.text.strip():
+        if "classificar" in response_text:
             result = describeImage(file_name, mime_type, conversation_id, prompt)
             return result
-        elif "remover_bg" in response.text.strip():
+        elif "remover_bg" in response_text:
             result = remove_bg(file_name, conversation_id)
-            result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto: ![Image no bg](http://localhost:5000/getfile/{conversation_id}/{result})"
+            result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto não remover: ![Image no bg](http://localhost:5000/getfile/{conversation_id}/{result})"
             return result_markdown
-        elif "image_to_black_and_white" in response.text.strip():
+        elif "image_to_black_and_white" in response_text:
             result = image_to_black_and_white(file_name, conversation_id)
             result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto: ![Image black white](http://localhost:5000/getfile/{conversation_id}/{result})"
             return result_markdown
-        elif "image_to_drawing" in response.text.strip():
+        elif "image_to_drawing" in response_text:
             result = image_to_drawing(file_name, conversation_id)
             result_markdown = f"retorne isso para o usuário e quebre a linha para ficar em baixo do texto sem alterar nada: {result}"
             return result_markdown
         else:
             return "Não foi possível realizar a ação solicitada"
+    elif validate_mimetype(mime_type, "video/*"):
+        print("vídeo")
+        generation_config = {
+            "temperature": 0,
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 8192,
+            "response_mime_type": "text/plain",
+        }
+
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            generation_config=generation_config,
+            system_instruction="Você deve agir como um especialista que toda decisões de qual ferramenta usar para videos de acordo com o prompt retornar a resposta em uma palavra que é as palavras do array\n\n\n[\"transcription\", \"watch_video\"]",
+        )
+
+        response = model.generate_content(prompt)
+
+
+        response_text = response.text.strip().lower()
+
+        if "transcription" in response_text:
+            result = video_transcription(file_name, mime_type, conversation_id, prompt)
+            return f"Retorna isso sem mudar nada: {result}" 
+        elif "watch_video" in response_text:
+            result = video_transcription(file_name, mime_type, conversation_id, prompt)
+            return f"Retorna isso sem mudar nada: {result}"
+        else:
+            return "Não foi possível realizar a ação solicitada"
+    elif mime_type == "application/pdf":
+        result = pdf_transcription(file_name, mime_type, conversation_id, prompt)
+        return f"Retorna isso sem mudar nada: {result}"
     else:
         return "Não foi possível realizar a ação solicitada"
 
 
+
+
 def image_to_drawing(image_name, conversation_id):
-    print("image_to_drawing")
     file_path = f"./files/{conversation_id}/{image_name}"
     imagem = cv2.imread(file_path)
     imagem_pb = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
@@ -96,8 +133,21 @@ def image_to_drawing(image_name, conversation_id):
     file_path_sketch = f"./files/{conversation_id}/{unique_id}.jpg"
     cv2.imwrite(file_path_sketch, imagem_desenho)
 
-    unique_id_cartoon = str(uuid.uuid4())
+    # Cartoon Sketch
+    
+    unique_id_cartoon_Sketch = str(uuid.uuid4())
 
+
+    file_path_cartoon_sketch = f"./files/{conversation_id}/{unique_id_cartoon_Sketch}.jpg"
+
+    anime_sketch = AnimeGAN(model="AnimeGANv3_PortraitSketch_25", file_path=file_path, device_name="CPU")
+    mat_sketch, scale_sketch = anime_sketch.load_test_data()
+    res_sketch = anime_sketch.converter(mat_sketch, scale_sketch)
+    cv2.imwrite(file_path_cartoon_sketch, res_sketch)
+
+    # Cartoon
+
+    unique_id_cartoon = str(uuid.uuid4())
 
     file_path_cartoon = f"./files/{conversation_id}/{unique_id_cartoon}.jpg"
 
@@ -106,21 +156,40 @@ def image_to_drawing(image_name, conversation_id):
 
     color = cv2.bilateralFilter(imagem, 9, 300, 300)
 
-    # 3) Cartoon
+
     cartoon = cv2.bitwise_and(color, color, mask=edges)
     
 
     cv2.imwrite(file_path_cartoon, cartoon)
+
+    # Hayao
+
+    unique_id_hayao = str(uuid.uuid4())
+
+    file_path_hayao = f"./files/{conversation_id}/{unique_id_hayao}.jpg"
+
+    anime_hayao = AnimeGAN(model="AnimeGANv3_Hayao_STYLE_36", file_path=file_path, device_name="CPU")
+    mat_hayao, scale_hayao = anime_hayao.load_test_data()
+    res_hayao = anime_hayao.converter(mat_hayao, scale_hayao)
+    cv2.imwrite(file_path_hayao, res_hayao)
 
     
     response = f"""
         # 1. Sketch Style
 
         ![Image_Sketch](http://localhost:5000/getfile/{conversation_id}/{unique_id}.jpg)
+        
+        # 2. Cartoon Sketch Style
 
-        # 2. Cartoon Style
+        ![Image_Cartoon_Sketch](http://localhost:5000/getfile/{conversation_id}/{unique_id_cartoon_Sketch}.jpg)
+
+        # 3. Cartoon Style
 
         ![Image_Cartoon](http://localhost:5000/getfile/{conversation_id}/{unique_id_cartoon}.jpg)
+
+        # 4. Hayao Style
+
+        ![Image_Hayao](http://localhost:5000/getfile/{conversation_id}/{unique_id_hayao}.jpg)
         
     """
 
@@ -180,6 +249,85 @@ def describeImage(image_name:str, mime_type:str, conversation_id:str, prompt:str
     }
 
     
+    response = model.generate_content(
+        [file, "\n\n", prompt]
+    )
+
+    print("Response: ", response.text)
+
+    return response.text #response.text
+
+# videos
+
+
+
+def video_transcription(video_name:str, mime_type:str, conversation_id:str, prompt:str)->str:
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config,
+    )
+
+    file_path = f"./files/{conversation_id}/{video_name}"
+    with open(file_path, "rb") as f:
+        buffer = f.read()
+    f.close()
+
+    file_base64 = base64.b64encode(buffer).decode("utf-8")
+
+    file = {
+        "inline_data": {
+            "data": file_base64,
+            "mime_type": mime_type,
+        }
+    }
+
+    
+    response = model.generate_content(
+        [file, "\n\n", prompt]
+    )
+
+    print("Response: ", response.text)
+
+    return response.text #response.text
+
+# FILE
+
+def pdf_transcription(pdf_name:str, mime_type:str, conversation_id:str, prompt:str)->str:
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config,
+    )
+
+    file_path = f"./files/{conversation_id}/{pdf_name}"
+    with open(file_path, "rb") as f:
+        buffer = f.read()
+    f.close()
+
+    file_base64 = base64.b64encode(buffer).decode("utf-8")
+
+    file = {
+        "inline_data": {
+            "data": file_base64,
+            "mime_type": mime_type,
+        }
+    }
+
     response = model.generate_content(
         [file, "\n\n", prompt]
     )

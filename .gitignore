@@ -19,3 +19,6 @@ inside_ia/files/*
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+inside_ia/teste_anime_gan.py
+inside_ia/models/*
