@@ -9,22 +9,22 @@ def genTitle(dataChat):
     genai.configure(api_key=os.environ["GOOGLE_TITLE_API"])
     # Detectando o idioma do input da conversa
     input_text = dataChat["input"]
-    detected_language = detect(input_text)  # Retorna o código do idioma (ex: 'en' para inglês, 'pt' para português)
-    
-    dataChatStr = json.dumps(dataChat)
-    # Ajustando o prompt baseado no idioma detectado
-    if detected_language == 'en':
-        prompt = f"Generate a single title in English based on the conversation: {dataChatStr}. Respond with only the title."
-    elif detected_language == 'pt':
-        prompt = f"Crie um título único em português com base na conversa: {dataChatStr}. Responda apenas com o título."
-    elif detected_language == 'es':
-        prompt = f"Genera un título único en español basado en la conversación: {dataChatStr}. Responde solo con el título."
-    else:
-        prompt = f"Generate a single title based on the conversation: {dataChatStr}. Respond with only the title."
+   
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 40,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
 
-    # Definindo o modelo e gerando a resposta
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    response = model.generate_content(prompt)
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config,
+        system_instruction="Você é um especialista em identificar o idioma do texto. Sua função é:\n1. Identificar o idioma do texto fornecido.\n2. Criar um título pluralizado, sem incluir nenhuma menção ao idioma identificado.\n3. Retornar apenas o título, nada mais.",
+    )
+
+    response = model.generate_content(input_text)
     title = response.text.replace('"', '').replace('\n', ' ')
     
     # Adicionando o título gerado ao dataChat

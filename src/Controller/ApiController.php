@@ -235,58 +235,5 @@ class ApiController extends AbstractController
 
 
         return $this->json($data_post);
-
-        /*$data_post_send = json_encode($data_post);
-
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://localhost:5000/chat',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>$data_post_send,
-            CURLOPT_HTTPHEADER => array(
-              'Content-Type: application/json',
-              'Cookie: PHPSESSID=1b16k3qo4u4lac49d0pa0rv4ed'
-            ),
-        ));
-          
-        $response = curl_exec($curl);
-
-        if(!$response)
-        {
-            return $this->json(["msg"=>"Ocorreu um erro"]);
-        }
-          
-        curl_close($curl);
-        $result = json_decode($response, true);
-
-
-        $humman_msg = new Messages();
-        $humman_msg->setType("Humman")->setMsg($result["input"])->setConversation($conversation);
-        $this->manager->persist($humman_msg);
-        $this->manager->flush();
-        $IA_msg = new Messages();
-        $IA_msg->setType("IA")->setMsg($result["output"])->setConversation($conversation);
-        $this->manager->persist($IA_msg);
-        $this->manager->flush();
-        $conversation->setExecutePrompt(true)->setDate(new DateTime());
-        $this->manager->persist($conversation);
-        $this->manager->flush();
-
-        $conservation_updated = $this->conversationsRepository->findOneBy([
-            "id"=>$id,
-            "user"=>$user
-        ]);
-
-
-        $conservation_updated->addMessage($humman_msg)->addMessage($IA_msg);
-
-
-        return $this->json($conservation_updated);*/
     }
 }

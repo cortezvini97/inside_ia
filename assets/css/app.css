@@ -928,3 +928,16 @@ p {
 .file-ia .img-view:hover .header{
     display: block;
 }
+
+
+.input-edit-title{
+    width: 100%;
+    border: none;
+    font-size: 0.9em;
+    background: var(--color-main);
+    white-space: nowrap;
+    overflow: hidden !important;
+    color: white;
+    padding: 13px;
+    border-radius: 5px;
+}
